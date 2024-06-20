@@ -3,9 +3,9 @@ import { Header, Footer, Inputbox } from "../exports";
 
 const App = () => {
   return (
-    <div className="app w-screen h-screen bg-black">
+    <div className="app w-screen min-h-screen bg-black">
       <Header />
-      <div className="w-1/2-screen p-4">
+      <div className="p-4 md:flex md:justify-center lg:block">
         <Inputbox />
       </div>
       <Footer />

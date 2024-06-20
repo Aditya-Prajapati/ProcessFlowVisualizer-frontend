@@ -1,13 +1,13 @@
 import "./Header.css";
 
-const Header = ({  }) => {
+const Header = ({}) => {
   return (
-    <>
-    <div className="header sticky top-0 px-4 py-3 shadow bg-white">
-      <h1 className="text-black text-xl font-heading shadow-text">Process Flow Visualizer</h1>
+    <div className="header px-4 py-3 bg-white w-screen sticky top-0 z-50">
+      <h1 className="text-black text-base md:text-2xl font-heading shadow-text">
+        Process Flow Visualizer
+      </h1>
     </div>
-    </>
   );
-}
+};
 
 export default Header;
