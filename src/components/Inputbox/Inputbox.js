@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import "./Inputbox.css";
-import { LabelAndInput, CustomDropdown } from "../../shared/exports";
+import { LabelAndInput, CustomDropdown } from "../../sharedComponents/exports";
 
 const options = [
   { value: "fcfs", label: "First Come First Serve, FCFS" },
@@ -14,12 +14,12 @@ const Inputbox = ({}) => {
   const [selected, setSelected] = useState(options[0]);
 
   return (
-    <div className="inputbox bg-white rounded-lg p-4 w-full lg:w-1/2-screen">
+    <div className="inputbox bg-white rounded-lg p-4 w-full">
       <h1 className="text-xl md:text-2xl font-heading font-medium shadow-text text-center mt-1 mb-2 md:mt-2 md:mb-4">
-        Inputs
+        Input
       </h1>
-      <div className="flex flex-wrap mx-auto p-1 text-sm md:text-lg">
-        <div className="flex items-center w-full md:w-1/3 p-2">
+      <div className="flex flex-col md:flex-row lg:flex-col mx-auto p-1 text-sm md:text-lg">
+        <div className="flex-1 items-center p-2">
           <details className="rounded-lg cursor-pointer">
             <summary>
               <span>Algorithm</span>
@@ -29,7 +29,7 @@ const Inputbox = ({}) => {
             </div>
           </details>
         </div>
-        <div className="w-full md:w-2/3 p-1">
+        <div className="flex-1 p-1">
           <CustomDropdown
             options={options}
             selected={selected}
