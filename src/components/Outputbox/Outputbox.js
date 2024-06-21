@@ -1,24 +1,15 @@
 import { GanttChart, ProcessTable } from "../exports";
 
 const processes = [
-  // { id: 1, arrivalTime: 0, burstTime: 5 },
-  // { id: 2, arrivalTime: 1, burstTime: 3 },
-  // { id: 3, arrivalTime: 2, burstTime: 8 },
-  // { id: 4, arrivalTime: 3, burstTime: 6 },
-  // { id: 1, arrivalTime: 0, burstTime: 5 },
-  // { id: 2, arrivalTime: 1, burstTime: 3 },
-  // { id: 3, arrivalTime: 2, burstTime: 8 },
-  // { id: 4, arrivalTime: 3, burstTime: 6 },
-  // { id: 1, arrivalTime: 0, burstTime: 5 },
-  // { id: 2, arrivalTime: 1, burstTime: 3 },
-  // { id: 4, arrivalTime: 3, burstTime: 6 },
-  // { id: 1, arrivalTime: 0, burstTime: 5 },
-  // { id: 2, arrivalTime: 1, burstTime: 3 },
-  // { id: 3, arrivalTime: 2, burstTime: 8 },
-  // { id: 4, arrivalTime: 3, burstTime: 6 },
-  // { id: 1, arrivalTime: 0, burstTime: 5 },
-  // { id: 2, arrivalTime: 1, burstTime: 3 },
-  // { id: 3, arrivalTime: 2, burstTime: 8 },
+  { id: 1, startTime: 0, endTime: 5, arrivalTime: 2, burstTime: 1, completionTime: 4, waitingTime: 4, turnaroundTime: 2 },
+  { id: 2, startTime: 1, endTime: 3, arrivalTime: 2, burstTime: 1, completionTime: 4, waitingTime: 4, turnaroundTime: 2 },
+  { id: 3, startTime: 2, endTime: 8, arrivalTime: 2, burstTime: 1, completionTime: 4, waitingTime: 4, turnaroundTime: 2 },
+  { id: 4, startTime: 3, endTime: 6, arrivalTime: 2, burstTime: 1, completionTime: 4, waitingTime: 4, turnaroundTime: 2 },
+  { id: 1, startTime: 0, endTime: 5, arrivalTime: 2, burstTime: 1, completionTime: 4, waitingTime: 4, turnaroundTime: 2 },
+  { id: 2, startTime: 1, endTime: 3, arrivalTime: 2, burstTime: 1, completionTime: 4, waitingTime: 4, turnaroundTime: 2 },
+  { id: 3, startTime: 2, endTime: 8, arrivalTime: 2, burstTime: 1, completionTime: 4, waitingTime: 4, turnaroundTime: 2 },
+  { id: 4, startTime: 3, endTime: 6, arrivalTime: 2, burstTime: 1, completionTime: 4, waitingTime: 4, turnaroundTime: 2 },
+  { id: 1, startTime: 0, endTime: 5, arrivalTime: 2, burstTime: 1, completionTime: 4, waitingTime: 4, turnaroundTime: 2 },
 ];
 
 

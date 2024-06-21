@@ -4,7 +4,7 @@ const GanttChart = ({ processes }) => {
       <div>Gantt Chart</div>
       <div className="cells flex flex-wrap justify-center">
         {!processes.length
-          ? <span className="text-xs md:text-sm">Please provide inputs</span>
+          ? <div className="text-center text-xs md:text-sm">Please provide inputs</div>
           : processes.map((process, idx) => {
               return (
                 <div className="cell flex flex-col my-2">
