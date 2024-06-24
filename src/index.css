@@ -21,6 +21,10 @@
   .inputStyles {
     @apply text-sm md:text-base px-2 py-1 md:px-4 md:py-2 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:border-black invalid:border-pink-500 invalid:text-pink-600;
   }
+
+  .err {
+    @apply text-xs md:text-sm text-red-500 text-center
+  }
 }
 
 @layer utilities {

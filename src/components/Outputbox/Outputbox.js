@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import { GanttChart, ProcessTable } from "../exports";
 
 const processes = [

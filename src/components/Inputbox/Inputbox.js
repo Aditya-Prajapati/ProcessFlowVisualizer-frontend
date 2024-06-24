@@ -10,6 +10,11 @@ const options = [
   { value: "rr", label: "Round Robin, RR" },
 ];
 
+const handleSubmit = () => {
+  // take input data and send to backend 
+  // Show loading... until gantt chart is created
+}
+
 const Inputbox = ({}) => {
   const [selected, setSelected] = useState(options[0]);
 
@@ -61,6 +66,7 @@ const Inputbox = ({}) => {
           placeholder="eg. 8"
         />
       )}
+      <button onClick={() => handleSubmit} className="w-full mt-4 bg-black hover:bg-white text-white hover:text-black active:text-white hover:border border-black active:bg-black active:border rounded-md py-2 px-3 ">Submit</button>
     </div>
   );
 };
