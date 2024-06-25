@@ -1,3 +1,4 @@
 import LabelAndInput from "./LabelAndInput";
 import CustomDropdown from "./CustomDropdown";
-export { LabelAndInput, CustomDropdown }
+import Modal from "./Modal";
+export { LabelAndInput, CustomDropdown, Modal }

@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 
-const CustomDropdown = ({ options, selected, setSelected }) => {
+const CustomDropdown = ({ options, algorithm, setAlgorithm }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   const handleOptionClick = (option) => {
-    setSelected(option);
+    setAlgorithm(option);
     setIsOpen(false);
   };
 
@@ -29,7 +29,7 @@ const CustomDropdown = ({ options, selected, setSelected }) => {
         onClick={() => setIsOpen(!isOpen)}
       >
         <div className="flex justify-between">
-          {selected.label} <span>▾</span>
+          {algorithm.label} <span>▾</span>
         </div>
       </button>
       {isOpen && (

@@ -10,7 +10,7 @@ const ProcessTable = ({ processes }) => {
       <div className="text-sm md:text-lg my-1"> Process table</div>
       {!processes.length ? (
         <div className="text-center text-xs md:text-sm">
-          Please provide inputs.
+          Provide inputs to see process table here.
         </div>
       ) : (
         <div className="processTable w-full overflow-auto">
