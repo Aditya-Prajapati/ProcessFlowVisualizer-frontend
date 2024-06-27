@@ -15,7 +15,7 @@ const Modal = ({ heading, description, buttonText, setInputErr }) => {
           <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
             <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
               <div className="items-center justify-center">
-                <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-black">
+                <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border border-red-500">
                   <svg
                     className="h-6 w-6 text-red-600"
                     fill="none"

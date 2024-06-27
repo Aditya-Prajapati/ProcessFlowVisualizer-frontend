@@ -23,12 +23,12 @@ const CustomDropdown = ({ options, algorithm, setAlgorithm }) => {
   }, []);
 
   return (
-    <div className="relative w-full text-sm md:text-base" ref={dropdownRef}>
+    <div className="relative w-full sm:text-xs md:text-sm" ref={dropdownRef}>
       <button
-        className="inputStyles relative w-full z-40"
+        className="inputStyles relative w-full z-40 md:p-2"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <div className="flex justify-between">
+        <div className="flex justify-between sm:text-xs md:text-sm">
           {algorithm.label} <span>▾</span>
         </div>
       </button>

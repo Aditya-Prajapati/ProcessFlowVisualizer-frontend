@@ -8,7 +8,7 @@ const ProcessTable = ({ processes }) => {
   return (
     <div className="processTable w-full">
       <div className="text-sm md:text-lg my-1"> Process table</div>
-      {!processes.length ? (
+      {!processes || !processes.length ? (
         <div className="text-center text-xs md:text-sm">
           Provide inputs to see process table here.
         </div>

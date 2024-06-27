@@ -2,7 +2,7 @@ import "./App.css";
 import { useEffect, useState } from "react";
 
 import { getGanttChartData } from "../../api/api";
-import { Header, Footer, Inputbox, Outputbox } from "../exports";
+import { Header, Footer, Inputbox, Outputbox, ProcessChart } from "../exports";
 
 const fetchGanttChartData = async (inputs, setGanttChartData, setLoading) => {
   if (inputs === null){
@@ -37,17 +37,22 @@ const App = () => {
   }, [inputs]); 
 
   return (
-    <div className="app w-screen min-h-screen bg-black">
+    <div className="app w-full min-h-screen bg-white">
       <Header />
-      <div className="flex flex-wrap justify-center lg:flex-nowrap">
-        <div className="m-4 w-full md:w-9/12 lg:w-4/12">
-        <Inputbox setInputs={setInputs} loading={loading} />
+      <div className="flex flex-col justify-between lg:flex-row">
+        <div className="lg:w-[30%] ms-2 mt-2 mr-2 lg:mr-0">
+          <Inputbox setInputs={setInputs} loading={loading} />
         </div>
-        <div className="m-4 w-full md:w-9/12 lg:w-8/12">
-          <Outputbox ganttChartData={ganttChartData} />
+        <div className="flex flex-col items-center lg:w-[70%] m-2">
+          <div className="mb-2 w-full">
+            <Outputbox ganttChartData={ganttChartData} />
+          </div>
+          <div className="mb-2 w-full">
+            <ProcessChart />
+          </div>
         </div>
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };
