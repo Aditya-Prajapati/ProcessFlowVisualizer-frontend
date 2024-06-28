@@ -105,7 +105,7 @@ const Inputbox = ({ setInputs, loading }) => {
       <h1 className="text-xl md:text-2xl font-heading font-medium shadow-text text-center mt-1 mb-2 md:mt-2 md:mb-4">
         Input
       </h1>
-      <div className="flex flex-col md:flex-row lg:flex-col mx-auto p-1 text-sm md:text-lg">
+      <div className="flex flex-col md:flex-row lg:flex-col mx-auto p-1 text-base md:text-md">
         <div className="flex-1 items-center p-2">
           <details className="rounded-lg cursor-pointer">
             <summary>

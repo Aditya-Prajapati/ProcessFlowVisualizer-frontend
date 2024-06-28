@@ -1,7 +1,7 @@
 const LabelAndInput = ({ label, description, placeholder, value, onChange, inputType }) => {
   return (
     <div className="flex flex-col md:flex-row lg:flex-col mx-auto p-1">
-      <div className="flex-1 items-center p-2 text-sm md:text-lg">
+      <div className="flex-1 items-center p-2 text-base md:text-md">
         <details className="rounded-lg cursor-pointer">
           <summary>
             <span className="w-full">{label}</span>

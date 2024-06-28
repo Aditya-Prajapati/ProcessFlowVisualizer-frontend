@@ -2,13 +2,15 @@ import React from "react";
 
 import { useScreenSize } from "../../contexts/ScreenSizeContext";
 
-const ProcessTable = ({ processes }) => {
+const ProcessTable = ({ processTableData }) => {
   const { sm, md, lg } = useScreenSize();
 
   return (
     <div className="processTable w-full">
-      <div className="text-sm md:text-lg my-1"> Process table</div>
-      {!processes || !processes.length ? (
+      <div className="text-base md:text-md my-1"> Process table</div>
+      {processTableData === "err" ? (
+          <div className="err">Error fetching process table data. Please retry.</div>
+        ) : !processTableData || !processTableData.length ? (
         <div className="text-center text-xs md:text-sm">
           Provide inputs to see process table here.
         </div>
@@ -28,7 +30,7 @@ const ProcessTable = ({ processes }) => {
               </tr>
             </thead>
             <tbody>
-              {processes.map((process, idx) => {
+              {processTableData.map((process, idx) => {
                 return (
                   <tr
                     key={idx}

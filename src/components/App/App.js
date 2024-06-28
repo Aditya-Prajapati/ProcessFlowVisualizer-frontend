@@ -1,12 +1,11 @@
 import "./App.css";
 import { useEffect, useState } from "react";
 
-import { getGanttChartData } from "../../api/api";
+import { getGanttChartData, getProcessTableData } from "../../api/api";
 import { Header, Footer, Inputbox, Outputbox, ProcessChart } from "../exports";
 
-const fetchGanttChartData = async (inputs, setGanttChartData, setLoading) => {
+const fetchGanttChartData = async (inputs, setGanttChartData) => {
   if (inputs === null){
-    setLoading(false);
     return;
   }
   try {
@@ -17,13 +16,27 @@ const fetchGanttChartData = async (inputs, setGanttChartData, setLoading) => {
   } catch (err) {
     console.log("Error fetching gantt chart data: ", err);
     setGanttChartData("err");
-  } finally {
-    setLoading(false);
   }
 };
 
+const fetchProcessTableData = async (inputs, setProcessTableData) => {
+  if (inputs === null){
+    return;
+  }
+  try {
+    const processTableData = await getProcessTableData(inputs.algorithm, {
+      processes: inputs.processes,
+    })
+    setProcessTableData(processTableData);
+  } catch (err) {
+    console.log("Error fetching process chart data: ", err);
+    setProcessTableData("err");
+  }
+}
+
 const App = () => {
   const [ganttChartData, setGanttChartData] = useState(null);
+  const [processTableData, setProcessTableData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [inputs, setInputs] = useState(null);
 
@@ -32,8 +45,15 @@ const App = () => {
       setLoading(true);
     }
     setTimeout(() => {
-      fetchGanttChartData(inputs, setGanttChartData, setLoading);
-    }, 1000)
+      const fetchData = async () => {
+        await Promise.all([
+          fetchGanttChartData(inputs, setGanttChartData),
+          fetchProcessTableData(inputs, setProcessTableData),
+        ]);
+        setLoading(false);
+      };
+      fetchData();
+    }, 500)
   }, [inputs]); 
 
   return (
@@ -45,10 +65,10 @@ const App = () => {
         </div>
         <div className="flex flex-col items-center lg:w-[70%] m-2">
           <div className="mb-2 w-full">
-            <Outputbox ganttChartData={ganttChartData} />
+            <Outputbox ganttChartData={ganttChartData} processTableData={processTableData} />
           </div>
           <div className="mb-2 w-full">
-            <ProcessChart />
+            <ProcessChart inputs={inputs} />
           </div>
         </div>
       </div>

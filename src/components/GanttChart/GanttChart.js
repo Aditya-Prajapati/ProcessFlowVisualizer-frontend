@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 const GanttChart = ({ ganttChartData }) => {
   return (
     <div className="ganttChart w-full">
-      <div className="text-sm md:text-lg my-1">Gantt chart</div>
+      <div className="text-base md:text-md my-1">Gantt chart</div>
       <div className="cells flex flex-wrap justify-center">
         {ganttChartData === "err" ? (
           <div className="err">Error fetching gantt chart data. Please retry.</div>
