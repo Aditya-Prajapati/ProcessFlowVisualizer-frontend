@@ -37,7 +37,7 @@ const CustomDropdown = ({ options, algorithm, setAlgorithm }) => {
           {options.map((option, index) => (
             <div
               key={index}
-              className="hover:bg-black hover:text-white cursor-pointer rounded p-2"
+              className="hover:bg-black hover:text-white cursor-pointer rounded p-2 text-xs md:text-sm"
               onClick={() => handleOptionClick(option)}
             >
               {option.label}

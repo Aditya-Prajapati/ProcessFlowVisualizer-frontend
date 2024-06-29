@@ -18,10 +18,10 @@ export const getProcessTableData = async (algorithm, processes) => {
     console.log("getProcessTableData request - algorithm:", algorithm, processes)
     const response = await apiClient.post(`${algorithm}/property`, processes)
     console.log("getProcessTableData response - ", response.data);
-    return response.data.property.processes;
+    return response.data;
   } 
   catch (err){
-    console.log("Error fetching process chart data: ", err);
+    console.log("Error fetching process table data: ", err);
     throw err;
   }
 }

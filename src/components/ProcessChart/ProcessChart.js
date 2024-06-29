@@ -1,17 +1,18 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 
 import { useScreenSize } from "../../contexts/ScreenSizeContext";
-const chartOptions = require("./chartOptions")
+const chartOptions = require("./chartOptions");
 
 const ProcessChart = ({ inputs, processChartData }) => {
   const { sm, md, lg } = useScreenSize();
-  let chartWidth = sm ? 380 : md ? 580 : lg ? 680 : 680;
+  let chartWidth = sm ? 300 : md ? 400 : lg ? 450 : 450;
 
-  const [series, setSeries] = useState([{
-      name: "series-1",
-      data: [30, 40, 45, 50, 49, 60, 70, 91] 
-  }]);
+  const [series, setSeries] = useState();
+  useEffect(() => {
+    const roundedValues = Object.values(processChartData || {}).map(value => parseFloat(value.toFixed(2)));
+    setSeries(roundedValues);
+  }, [processChartData])
 
   return (
     <div className="processChart bg-white rounded-lg p-4 w-full shadow z-40">
@@ -20,15 +21,15 @@ const ProcessChart = ({ inputs, processChartData }) => {
       </h1>
       <div className="w-full">
         <div className="flex justify-center p-2 overflow-auto">
-        {!inputs ? (
-          <div className="err">Error fetching process chart data. Please retry.</div>
-        ) : !processChartData || !processChartData.length ? (
-          <div className="text-center text-xs md:text-sm">
-            Provide inputs to see process chart here.
-          </div>
-        ) : (
-          <Chart options={chartOptions} series={series} type="line" width={chartWidth} />
-        )}
+          {inputs === "err" ? (
+            <div className="err">Error fetching process chart data. Please retry.</div>
+          ) : !series || !series.length ? (
+            <div className="text-center text-xs md:text-sm">
+              Provide inputs to see process chart here.
+            </div>
+          ) : (
+          <Chart options={chartOptions} series={series} type={chartOptions.chart.type} width={chartWidth} />
+          )}
         </div>
       </div>
     </div>

@@ -13,7 +13,7 @@ const options = [
 const parseInputString = (inputString, setInputErr) => {
   if (typeof inputString !== "string") {
     setInputErr("Please enter integers only.");
-    return [];
+    return null;
   }
 
   const values = inputString.trim().split(/\s+/);
@@ -22,7 +22,7 @@ const parseInputString = (inputString, setInputErr) => {
   inputString = inputString.trim();
   if (inputString.length !== 0 && integers.some((val) => isNaN(val))) {
     setInputErr("Please enter integers only.");
-    return [];
+    return null;
   }
   return integers;
 };
@@ -41,7 +41,7 @@ const parseInputs = (algorithm, arrivalTimes, burstTimes, priorities, timeQuantu
   const parsedBurstTimes = parseInputString(burstTimes, setInputErr);
   const parsedPriorities = parseInputString(priorities, setInputErr);
   const parsedTimeQuantum = parseInputString(timeQuantum, setInputErr);
-  if (inputErr) {
+  if (inputErr || !parsedArrivalTimes || !parsedBurstTimes || !parsedPriorities || !parsedTimeQuantum) {
     return null;
   }
 
@@ -81,7 +81,7 @@ const parseInputs = (algorithm, arrivalTimes, burstTimes, priorities, timeQuantu
   }
 };
 
-const Inputbox = ({ setInputs, loading }) => {
+const Inputbox = ({ inputs, setInputs, loading }) => {
   const [algorithm, setAlgorithm] = useState(options[0]);
   const [arrivalTimes, setArrivalTimes] = useState("");
   const [burstTimes, setBurstTimes] = useState("");
@@ -93,10 +93,10 @@ const Inputbox = ({ setInputs, loading }) => {
     const inputData = parseInputs(algorithm.value, arrivalTimes, burstTimes, priorities, timeQuantum, inputErr, setInputErr);
     if (inputErr !== false && (inputData === null || inputData.processes.length === 0)){
       setInputErr("Error in parsing inputs.");
-      setInputs(null);
+      setInputs("err");
     }
     else {
-      setInputs(inputErr ? null : inputData);
+      setInputs(inputErr || !inputData ? "err" : inputData);
     }
   };
 
@@ -112,7 +112,7 @@ const Inputbox = ({ setInputs, loading }) => {
               <span>Algorithm</span>
             </summary>
             <div className="mt-1 text-sm">
-              <p>One line define for algorithm</p>
+              <p>A predefined set of rules for determining the order of executing processes on a computer's CPU.</p>
             </div>
           </details>
         </div>
@@ -122,14 +122,14 @@ const Inputbox = ({ setInputs, loading }) => {
       </div>
       <LabelAndInput
         label="Arrival Times"
-        description="Arrival time one line define"
+        description="The instance when a process enters the ready queue and is available for CPU execution."
         placeholder="eg. 3 5 11 2 4"
         value={arrivalTimes}
         onChange={(e) => setArrivalTimes(e.target.value)}
       />
       <LabelAndInput
         label="Burst Times"
-        description="Burst time one line define"
+        description="The amount of CPU time required for a process to complete its execution."
         placeholder="eg. 2 6 8 13 7"
         value={burstTimes}
         onChange={(e) => setBurstTimes(e.target.value)}
@@ -137,7 +137,7 @@ const Inputbox = ({ setInputs, loading }) => {
       {algorithm.value === "priority" && (
         <LabelAndInput
           label="Priorities"
-          description="One line priority definition"
+          description="Values assigned to processes to determine their relative importance or order of execution."
           placeholder="eg. 1 2 3 4 5"
           value={priorities}
           onChange={(e) => setPriorities(e.target.value)}
@@ -146,7 +146,7 @@ const Inputbox = ({ setInputs, loading }) => {
       {algorithm.value === "rr" && (
         <LabelAndInput
           label="Time Quantum"
-          description="One line priority definition"
+          description="A fixed unit of time allocated to each process for uninterrupted execution on the CPU before potentially being preempted or switched."
           placeholder="eg. 8"
           inputType="number"
           value={timeQuantum}
@@ -157,7 +157,7 @@ const Inputbox = ({ setInputs, loading }) => {
         <svg className={`${loading ? "inline-block animate-spin h-4 w-4 md:h-5 md:w-5 mr-2 md:mr-3" : "hidden"}`} viewBox="0 0 24 24">
           <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
-        <span>{loading ? "Solving..." : "Submit"}</span>
+        <span>{loading ? (!inputs ? "Loading..." : "Solving...") : "Submit"}</span>
       </button>
       {inputErr && (
         <Modal heading={"Inputs error"} description={inputErr} buttonText="Okay" setInputErr={setInputErr}
