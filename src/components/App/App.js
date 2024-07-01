@@ -28,10 +28,11 @@ const fetchProcessTableData = async (inputs, setProcessTableData, setProcessChar
       processes: inputs.processes,
     })
     setProcessTableData(processTableData.property.processes);
-    setProcessChartData(processTableData.property.processes[0].averages)
+    setProcessChartData(processTableData.property.processes[0].averages || "err")
   } catch (err) {
     console.log("Error fetching process chart data: ", err);
     setProcessTableData("err");
+    setProcessChartData("err");
   }
 }
 
@@ -70,7 +71,7 @@ const App = () => {
             <Outputbox ganttChartData={ganttChartData} processTableData={processTableData} />
           </div>
           <div className="mb-2 w-full">
-            <ProcessChart inputs={inputs} processChartData={processChartData} />
+            <ProcessChart processChartData={processChartData} />
           </div>
         </div>
       </div>

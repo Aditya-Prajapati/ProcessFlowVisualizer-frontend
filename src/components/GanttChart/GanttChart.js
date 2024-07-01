@@ -4,7 +4,7 @@ const GanttChart = ({ ganttChartData }) => {
   return (
     <div className="ganttChart w-full">
       <div className="text-base md:text-md my-1">Gantt chart</div>
-      <div className="cells flex flex-wrap justify-center">
+      <div className="cells flex flex-wrap justify-center max-h-[400px] overflow-auto">
         {ganttChartData === "err" ? (
           <div className="err">Error fetching gantt chart data. Please retry.</div>
         ) : !ganttChartData || !ganttChartData.length ? (

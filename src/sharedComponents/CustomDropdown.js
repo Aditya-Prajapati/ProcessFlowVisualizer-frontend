@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-const CustomDropdown = ({ options, algorithm, setAlgorithm }) => {
+const CustomDropdown = ({ options, algorithm, setAlgorithm, setInputErr }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -26,7 +26,7 @@ const CustomDropdown = ({ options, algorithm, setAlgorithm }) => {
     <div className="relative w-full sm:text-xs md:text-sm" ref={dropdownRef}>
       <button
         className="inputStyles relative w-full z-40 md:p-2"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {setIsOpen(!isOpen); setInputErr(false);}}
       >
         <div className="flex justify-between sm:text-xs md:text-sm">
           {algorithm.label} <span>▾</span>

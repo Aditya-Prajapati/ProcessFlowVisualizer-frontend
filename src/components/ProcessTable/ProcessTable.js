@@ -15,9 +15,9 @@ const ProcessTable = ({ processTableData }) => {
           Provide inputs to see process table here.
         </div>
       ) : (
-        <div className="processTable w-full overflow-auto">
+        <div className="processTable w-full max-h-[500px] overflow-auto">
           <table className="text-xs md:text-sm w-full border-separate">
-            <thead className="font-light md:font-bold">
+            <thead className="font-light md:font-bold sticky top-0">
               <tr className="text-center text-white bg-black">
                 <th className="rounded p-1">{sm ? "PID" : "Process Id"}</th>
                 <th className="rounded p-1">{sm ? "AT" : "Arrival time"}</th>

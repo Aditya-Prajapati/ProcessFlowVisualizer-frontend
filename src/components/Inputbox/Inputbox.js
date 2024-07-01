@@ -10,9 +10,10 @@ const options = [
   { value: "rr", label: "Round Robin, RR" },
 ];
 
-const parseInputString = (inputString, setInputErr) => {
+// fieldNo: 1-ArrivalTimes, 2-BurstTimes, 3-Priorities, 4-TimeQuantum
+const parseInputString = (inputString, setInputErr, fieldNo) => {
   if (typeof inputString !== "string") {
-    setInputErr("Please enter integers only.");
+    setInputErr({description: "Please enter integers only.", fieldNo: fieldNo});
     return null;
   }
 
@@ -21,7 +22,15 @@ const parseInputString = (inputString, setInputErr) => {
 
   inputString = inputString.trim();
   if (inputString.length !== 0 && integers.some((val) => isNaN(val))) {
-    setInputErr("Please enter integers only.");
+    setInputErr({description: "Please enter integers only.", fieldNo: [fieldNo]});
+    return null;
+  }
+
+  const containsNegative = (array) => {
+    return array.some((value) => value < 0);
+  };
+  if (containsNegative(integers)){
+    setInputErr({description: "Values should not be negative.", fieldNo: [fieldNo]});
     return null;
   }
   return integers;
@@ -32,34 +41,38 @@ const parseInputs = (algorithm, arrivalTimes, burstTimes, priorities, timeQuantu
   const trimmedBurstTime = burstTimes.trim();
   const trimmedPriorities = priorities.trim();
   const trimmedTimeQuantum = timeQuantum.trim();
-  if (trimmedArrivalTime === "" || trimmedBurstTime === "" || (algorithm === "priority" && trimmedPriorities === "") ||(algorithm === "rr" && trimmedTimeQuantum === "")) {
-    setInputErr("Please enter all the required fields.");
+  if (trimmedArrivalTime === ""){ 
+    setInputErr({description: "Please enter all the required fields.", fieldNo: [1]});
+    return null;
+  }
+  else if (trimmedBurstTime === ""){
+    setInputErr({description: "Please enter all the required fields.", fieldNo: [2]});
+    return null;
+  }
+  else if (algorithm === "priority" && trimmedPriorities === ""){
+    setInputErr({description: "Please enter all the required fields.", fieldNo: [3]});
+    return null;
+  }
+  else if (algorithm === "rr" && trimmedTimeQuantum === ""){
+    setInputErr({description: "Please enter all the required fields.", fieldNo: [4]});
     return null;
   }
 
-  const parsedArrivalTimes = parseInputString(arrivalTimes, setInputErr);
-  const parsedBurstTimes = parseInputString(burstTimes, setInputErr);
-  const parsedPriorities = parseInputString(priorities, setInputErr);
-  const parsedTimeQuantum = parseInputString(timeQuantum, setInputErr);
+  const parsedArrivalTimes = parseInputString(arrivalTimes, setInputErr, 1);
+  const parsedBurstTimes = parseInputString(burstTimes, setInputErr, 2);
+  const parsedPriorities = parseInputString(priorities, setInputErr, 3);
+  const parsedTimeQuantum = parseInputString(timeQuantum, setInputErr, 4);
   if (inputErr || !parsedArrivalTimes || !parsedBurstTimes || !parsedPriorities || !parsedTimeQuantum) {
     return null;
   }
 
-  const containsNegative = (arrays) => {
-    return arrays.some((array) => array.some((value) => value < 0));
-  };
-  if (containsNegative([parsedArrivalTimes, parsedBurstTimes, parsedPriorities, parsedTimeQuantum])) {
-    setInputErr("Values should not be negative.");
-    return null;
-  }
-
   if (parsedArrivalTimes.length !== parsedBurstTimes.length) {
-    setInputErr("Arrival times & Burst times should have equal number of processes.");
+    setInputErr({description: "Arrival times & Burst times should have equal number of processes.", fieldNo: [1, 2] });
     return null;
   }
 
   if (algorithm === "priority" && parsedArrivalTimes.length !== parsedPriorities.length) {
-    setInputErr("Arrival times, Burst times & Priorities should have equal number of processes.");
+    setInputErr({description: "Arrival times, Burst times & Priorities should have equal number of processes.", fieldNo: [1, 3] });
     return null;
   }
 
@@ -92,7 +105,6 @@ const Inputbox = ({ inputs, setInputs, loading }) => {
   const handleSubmit = () => {
     const inputData = parseInputs(algorithm.value, arrivalTimes, burstTimes, priorities, timeQuantum, inputErr, setInputErr);
     if (inputErr !== false && (inputData === null || inputData.processes.length === 0)){
-      setInputErr("Error in parsing inputs.");
       setInputs("err");
     }
     else {
@@ -109,7 +121,7 @@ const Inputbox = ({ inputs, setInputs, loading }) => {
         <div className="flex-1 items-center p-2">
           <details className="rounded-lg cursor-pointer">
             <summary>
-              <span>Algorithm</span>
+              <span class="text-sm md:text-base">Algorithm</span>
             </summary>
             <div className="mt-1 text-sm">
               <p>A predefined set of rules for determining the order of executing processes on a computer's CPU.</p>
@@ -117,7 +129,7 @@ const Inputbox = ({ inputs, setInputs, loading }) => {
           </details>
         </div>
         <div className="flex-1 p-1">
-          <CustomDropdown options={options} algorithm={algorithm} setAlgorithm={setAlgorithm} />
+          <CustomDropdown options={options} algorithm={algorithm} setAlgorithm={setAlgorithm} setInputErr={setInputErr} />
         </div>
       </div>
       <LabelAndInput
@@ -125,14 +137,16 @@ const Inputbox = ({ inputs, setInputs, loading }) => {
         description="The instance when a process enters the ready queue and is available for CPU execution."
         placeholder="eg. 3 5 11 2 4"
         value={arrivalTimes}
-        onChange={(e) => setArrivalTimes(e.target.value)}
+        showErr={inputErr && inputErr.fieldNo.includes(1)}
+        onChange={(e) => {setArrivalTimes(e.target.value); setInputErr(false);}}
       />
       <LabelAndInput
         label="Burst Times"
         description="The amount of CPU time required for a process to complete its execution."
         placeholder="eg. 2 6 8 13 7"
         value={burstTimes}
-        onChange={(e) => setBurstTimes(e.target.value)}
+        showErr={inputErr && inputErr.fieldNo.includes(2)}
+        onChange={(e) => {setBurstTimes(e.target.value); setInputErr(false);}}
       />
       {algorithm.value === "priority" && (
         <LabelAndInput
@@ -140,7 +154,8 @@ const Inputbox = ({ inputs, setInputs, loading }) => {
           description="Values assigned to processes to determine their relative importance or order of execution."
           placeholder="eg. 1 2 3 4 5"
           value={priorities}
-          onChange={(e) => setPriorities(e.target.value)}
+          showErr={inputErr && inputErr.fieldNo.includes(3)}
+          onChange={(e) => {setPriorities(e.target.value); setInputErr(false);}}
         />
       )}
       {algorithm.value === "rr" && (
@@ -150,19 +165,25 @@ const Inputbox = ({ inputs, setInputs, loading }) => {
           placeholder="eg. 8"
           inputType="number"
           value={timeQuantum}
-          onChange={(e) => setTimeQuantum(e.target.value)}
+          showErr={inputErr && inputErr.fieldNo.includes(4)}
+          onChange={(e) => {setTimeQuantum(e.target.value); setInputErr(false);}}
         />
       )}
-      <button onClick={handleSubmit} className="flex items-center justify-center md:w-full mt-4 bg-black hover:bg-white text-sm md:text-base text-white hover:text-black active:text-white border border-black active:bg-black active:border rounded-md px-3 py-1 md:p-2">
-        <svg className={`${loading ? "inline-block animate-spin h-4 w-4 md:h-5 md:w-5 mr-2 md:mr-3" : "hidden"}`} viewBox="0 0 24 24">
-          <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-        <span>{loading ? (!inputs ? "Loading..." : "Solving...") : "Submit"}</span>
-      </button>
-      {inputErr && (
+      <div className="flex flex-wrap">
+        <button onClick={handleSubmit} className="flex items-center justify-center md:w-full mt-4 bg-black hover:bg-white text-sm md:text-base text-white hover:text-black active:text-white border border-black active:bg-black active:border rounded-md px-3 py-1 md:p-2">
+          <svg className={`${loading ? "inline-block animate-spin h-4 w-4 md:h-5 md:w-5 mr-2 md:mr-3" : "hidden"}`} viewBox="0 0 24 24">
+            <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>{loading ? (!inputs ? "Loading..." : "Solving...") : "Submit"}</span>
+        </button>
+        {inputErr && (
+          <div className="err text-left md:text-center lg:text-left mt-2 ms-1 w-full">{inputErr.description}</div>
+        )}
+      </div>
+      {/* {inputErr && (
         <Modal heading={"Inputs error"} description={inputErr} buttonText="Okay" setInputErr={setInputErr}
         />
-      )}
+      )} */}
     </div>
   );
 };
