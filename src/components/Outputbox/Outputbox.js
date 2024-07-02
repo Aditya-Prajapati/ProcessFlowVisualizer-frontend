@@ -13,7 +13,7 @@ const Outputbox = ({ ganttChartData, processTableData }) => {
           <GanttChart ganttChartData={ganttChartData} />
         </div>
         <div className="p-2">
-          <ProcessTable processTableData={processTableData} />
+          <ProcessTable processTableData={processTableData} heading={"Process table"} />
         </div>
       </div>
     </div>

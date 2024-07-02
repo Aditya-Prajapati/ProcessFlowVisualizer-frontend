@@ -5,4 +5,5 @@ import Outputbox from "./Outputbox/Outputbox";
 import GanttChart from "./GanttChart/GanttChart";
 import ProcessTable from "./ProcessTable/ProcessTable";
 import ProcessChart from "./ProcessChart/ProcessChart";
-export { Header, Footer, Inputbox, Outputbox, GanttChart, ProcessTable, ProcessChart }
+import Comparebox from "./Comparebox/Comparebox";
+export { Header, Footer, Inputbox, Outputbox, GanttChart, ProcessTable, ProcessChart, Comparebox }

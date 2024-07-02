@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 
-const CustomDropdown = ({ options, algorithm, setAlgorithm, setInputErr }) => {
+const CustomDropdown = ({ options, algorithm, setAlgorithm, setInputErr, setButtonText }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   const handleOptionClick = (option) => {
     setAlgorithm(option);
     setIsOpen(false);
+    setButtonText("Submit");
   };
 
   const handleClickOutside = (event) => {

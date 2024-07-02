@@ -2,7 +2,7 @@ import "./App.css";
 import { useEffect, useState } from "react";
 
 import { getGanttChartData, getProcessTableData } from "../../api/api";
-import { Header, Footer, Inputbox, Outputbox, ProcessChart } from "../exports";
+import { Header, Footer, Inputbox, Outputbox, ProcessChart, Comparebox } from "../exports";
 
 const fetchGanttChartData = async (inputs, setGanttChartData) => {
   if (!inputs || inputs === "err"){
@@ -27,8 +27,17 @@ const fetchProcessTableData = async (inputs, setProcessTableData, setProcessChar
     const processTableData = await getProcessTableData(inputs.algorithm, {
       processes: inputs.processes,
     })
+    setProcessChartData(processTableData.property.averages || "err");
+    const headers = [
+      { text: "Process Id", smText: "PID" },
+      { text: "Arrival time", smText: "AT" },
+      { text: "Burst time", smText: "BT" },
+      { text: "Completion time", smText: "CT" },
+      { text: "Turnaround time", smText: "TAT" },
+      { text: "Waiting time", smText: "WT" }
+    ];
+    processTableData.property.processes.unshift(headers);
     setProcessTableData(processTableData.property.processes);
-    setProcessChartData(processTableData.property.processes[0].averages || "err")
   } catch (err) {
     console.log("Error fetching process chart data: ", err);
     setProcessTableData("err");
@@ -40,6 +49,8 @@ const App = () => {
   const [ganttChartData, setGanttChartData] = useState(null);
   const [processTableData, setProcessTableData] = useState(null);
   const [processChartData, setProcessChartData] = useState(null);
+  const [comparisonData, setComparisonData] = useState(null);
+  const [buttonText, setButtonText] = useState("");
   const [loading, setLoading] = useState(false);
   const [inputs, setInputs] = useState(null);
 
@@ -64,7 +75,7 @@ const App = () => {
       <Header />
       <div className="flex flex-col justify-between lg:flex-row">
         <div className="lg:w-[30%] ms-2 mt-2 mr-2 lg:mr-0">
-          <Inputbox inputs={inputs} setInputs={setInputs} loading={loading} />
+          <Inputbox inputs={inputs} setInputs={setInputs} loading={loading} buttonText={buttonText} setButtonText={setButtonText} setComparisonData={setComparisonData} />
         </div>
         <div className="flex flex-col items-center lg:w-[70%] m-2">
           <div className="mb-2 w-full">
@@ -72,6 +83,9 @@ const App = () => {
           </div>
           <div className="mb-2 w-full">
             <ProcessChart processChartData={processChartData} />
+          </div>
+          <div className="mb-2 w-full">
+            <Comparebox buttonText={buttonText} comparisonData={comparisonData} />
           </div>
         </div>
       </div>

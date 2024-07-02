@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import "./Inputbox.css";
 import { LabelAndInput, CustomDropdown, Modal } from "../../sharedComponents/exports";
@@ -76,6 +76,11 @@ const parseInputs = (algorithm, arrivalTimes, burstTimes, priorities, timeQuantu
     return null;
   }
 
+  if (algorithm === "rr" && parsedTimeQuantum == 0){
+    setInputErr({description: "Time quantum should be greater than 0", fieldNo: [4] });
+    return null;
+  }
+
   if (inputErr) {
     return null;
   } else {
@@ -94,7 +99,7 @@ const parseInputs = (algorithm, arrivalTimes, burstTimes, priorities, timeQuantu
   }
 };
 
-const Inputbox = ({ inputs, setInputs, loading }) => {
+const Inputbox = ({ inputs, setInputs, loading, buttonText, setButtonText, setComparisonData }) => {
   const [algorithm, setAlgorithm] = useState(options[0]);
   const [arrivalTimes, setArrivalTimes] = useState("");
   const [burstTimes, setBurstTimes] = useState("");
@@ -102,15 +107,28 @@ const Inputbox = ({ inputs, setInputs, loading }) => {
   const [timeQuantum, setTimeQuantum] = useState("");
   const [inputErr, setInputErr] = useState(false);
 
-  const handleSubmit = () => {
-    const inputData = parseInputs(algorithm.value, arrivalTimes, burstTimes, priorities, timeQuantum, inputErr, setInputErr);
-    if (inputErr !== false && (inputData === null || inputData.processes.length === 0)){
-      setInputs("err");
+  const handleSubmit = (e) => {
+    if (e.target.textContent === "Compare"){
+      const headers = [
+        { text: "Algorithm" },
+        { text: "Averages" },
+      ];
+      setComparisonData([headers, {algorithm: "RR", averages: ["turnaroundtime: 3", "omething: 2"]}, {algorithm: "RR", averages: ["turnaroundtime: 3", "omething: 2"]}]);
     }
     else {
-      setInputs(inputErr || !inputData ? "err" : inputData);
+      const inputData = parseInputs(algorithm.value, arrivalTimes, burstTimes, priorities, timeQuantum, inputErr, setInputErr);
+      if (inputErr !== false && (inputData === null || inputData.processes.length === 0)){
+        setInputs("err");
+      }
+      else {
+        setInputs(inputErr || !inputData ? "err" : inputData);
+      }
     }
   };
+
+  useEffect(() => {
+    setButtonText(loading ? (!inputs ? "Loading..." : (buttonText === "Compare" ? "Comparing..." : "Solving...")) : ((inputs && inputs !== "err" && !inputErr) ? "Compare" : "Submit"))
+  }, [loading])
 
   return (
     <div className="inputbox sticky left-2 top-16 bg-white rounded-lg p-4 w-full shadow">
@@ -121,7 +139,7 @@ const Inputbox = ({ inputs, setInputs, loading }) => {
         <div className="flex-1 items-center p-2">
           <details className="rounded-lg cursor-pointer">
             <summary>
-              <span class="text-sm md:text-base">Algorithm</span>
+              <span className="text-sm md:text-base">Algorithm</span>
             </summary>
             <div className="mt-1 text-sm">
               <p>A predefined set of rules for determining the order of executing processes on a computer's CPU.</p>
@@ -129,7 +147,7 @@ const Inputbox = ({ inputs, setInputs, loading }) => {
           </details>
         </div>
         <div className="flex-1 p-1">
-          <CustomDropdown options={options} algorithm={algorithm} setAlgorithm={setAlgorithm} setInputErr={setInputErr} />
+          <CustomDropdown options={options} algorithm={algorithm} setAlgorithm={setAlgorithm} setInputErr={setInputErr} setButtonText={setButtonText} />
         </div>
       </div>
       <LabelAndInput
@@ -138,7 +156,7 @@ const Inputbox = ({ inputs, setInputs, loading }) => {
         placeholder="eg. 3 5 11 2 4"
         value={arrivalTimes}
         showErr={inputErr && inputErr.fieldNo.includes(1)}
-        onChange={(e) => {setArrivalTimes(e.target.value); setInputErr(false);}}
+        onChange={(e) => {setArrivalTimes(e.target.value); setInputErr(false); setButtonText("Submit");}}
       />
       <LabelAndInput
         label="Burst Times"
@@ -146,7 +164,7 @@ const Inputbox = ({ inputs, setInputs, loading }) => {
         placeholder="eg. 2 6 8 13 7"
         value={burstTimes}
         showErr={inputErr && inputErr.fieldNo.includes(2)}
-        onChange={(e) => {setBurstTimes(e.target.value); setInputErr(false);}}
+        onChange={(e) => {setBurstTimes(e.target.value); setInputErr(false); setButtonText("Submit");}}
       />
       {algorithm.value === "priority" && (
         <LabelAndInput
@@ -155,7 +173,7 @@ const Inputbox = ({ inputs, setInputs, loading }) => {
           placeholder="eg. 1 2 3 4 5"
           value={priorities}
           showErr={inputErr && inputErr.fieldNo.includes(3)}
-          onChange={(e) => {setPriorities(e.target.value); setInputErr(false);}}
+          onChange={(e) => {setPriorities(e.target.value); setInputErr(false); setButtonText("Submit");}}
         />
       )}
       {algorithm.value === "rr" && (
@@ -166,7 +184,7 @@ const Inputbox = ({ inputs, setInputs, loading }) => {
           inputType="number"
           value={timeQuantum}
           showErr={inputErr && inputErr.fieldNo.includes(4)}
-          onChange={(e) => {setTimeQuantum(e.target.value); setInputErr(false);}}
+          onChange={(e) => {setTimeQuantum(e.target.value); setInputErr(false); setButtonText("Submit");}}
         />
       )}
       <div className="flex flex-wrap">
@@ -174,7 +192,7 @@ const Inputbox = ({ inputs, setInputs, loading }) => {
           <svg className={`${loading ? "inline-block animate-spin h-4 w-4 md:h-5 md:w-5 mr-2 md:mr-3" : "hidden"}`} viewBox="0 0 24 24">
             <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          <span>{loading ? (!inputs ? "Loading..." : "Solving...") : "Submit"}</span>
+          <span>{buttonText}</span>
         </button>
         {inputErr && (
           <div className="err text-left md:text-center lg:text-left mt-2 ms-1 w-full">{inputErr.description}</div>
