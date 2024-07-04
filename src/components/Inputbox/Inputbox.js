@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 
 import "./Inputbox.css";
+import parseInputs from "./parseInputs";
+import { fetchComparisonData } from "../App/fetchDataFunctions";
 import { LabelAndInput, CustomDropdown, Modal } from "../../sharedComponents/exports";
 
 const options = [
@@ -10,96 +12,7 @@ const options = [
   { value: "rr", label: "Round Robin, RR" },
 ];
 
-// fieldNo: 1-ArrivalTimes, 2-BurstTimes, 3-Priorities, 4-TimeQuantum
-const parseInputString = (inputString, setInputErr, fieldNo) => {
-  if (typeof inputString !== "string") {
-    setInputErr({description: "Please enter integers only.", fieldNo: fieldNo});
-    return null;
-  }
-
-  const values = inputString.trim().split(/\s+/);
-  const integers = values.map((val) => parseInt(val));
-
-  inputString = inputString.trim();
-  if (inputString.length !== 0 && integers.some((val) => isNaN(val))) {
-    setInputErr({description: "Please enter integers only.", fieldNo: [fieldNo]});
-    return null;
-  }
-
-  const containsNegative = (array) => {
-    return array.some((value) => value < 0);
-  };
-  if (containsNegative(integers)){
-    setInputErr({description: "Values should not be negative.", fieldNo: [fieldNo]});
-    return null;
-  }
-  return integers;
-};
-
-const parseInputs = (algorithm, arrivalTimes, burstTimes, priorities, timeQuantum, inputErr, setInputErr) => {
-  const trimmedArrivalTime = arrivalTimes.trim();
-  const trimmedBurstTime = burstTimes.trim();
-  const trimmedPriorities = priorities.trim();
-  const trimmedTimeQuantum = timeQuantum.trim();
-  if (trimmedArrivalTime === ""){ 
-    setInputErr({description: "Please enter all the required fields.", fieldNo: [1]});
-    return null;
-  }
-  else if (trimmedBurstTime === ""){
-    setInputErr({description: "Please enter all the required fields.", fieldNo: [2]});
-    return null;
-  }
-  else if (algorithm === "priority" && trimmedPriorities === ""){
-    setInputErr({description: "Please enter all the required fields.", fieldNo: [3]});
-    return null;
-  }
-  else if (algorithm === "rr" && trimmedTimeQuantum === ""){
-    setInputErr({description: "Please enter all the required fields.", fieldNo: [4]});
-    return null;
-  }
-
-  const parsedArrivalTimes = parseInputString(arrivalTimes, setInputErr, 1);
-  const parsedBurstTimes = parseInputString(burstTimes, setInputErr, 2);
-  const parsedPriorities = parseInputString(priorities, setInputErr, 3);
-  const parsedTimeQuantum = parseInputString(timeQuantum, setInputErr, 4);
-  if (inputErr || !parsedArrivalTimes || !parsedBurstTimes || !parsedPriorities || !parsedTimeQuantum) {
-    return null;
-  }
-
-  if (parsedArrivalTimes.length !== parsedBurstTimes.length) {
-    setInputErr({description: "Arrival times & Burst times should have equal number of processes.", fieldNo: [1, 2] });
-    return null;
-  }
-
-  if (algorithm === "priority" && parsedArrivalTimes.length !== parsedPriorities.length) {
-    setInputErr({description: "Arrival times, Burst times & Priorities should have equal number of processes.", fieldNo: [1, 3] });
-    return null;
-  }
-
-  if (algorithm === "rr" && parsedTimeQuantum == 0){
-    setInputErr({description: "Time quantum should be greater than 0", fieldNo: [4] });
-    return null;
-  }
-
-  if (inputErr) {
-    return null;
-  } else {
-    const processes = parsedArrivalTimes.map((arrivalTime, index) => ({
-      id: index,
-      arrivalTime: arrivalTime,
-      burstTime: parsedBurstTimes[index],
-      priority: algorithm === "priority" ? parsedPriorities[index] : null,
-      timeQuantum: algorithm === "rr" ? parsedTimeQuantum : null,
-    }));
-
-    return {
-      algorithm: algorithm,
-      processes: processes,
-    };
-  }
-};
-
-const Inputbox = ({ inputs, setInputs, loading, buttonText, setButtonText, setComparisonData }) => {
+const Inputbox = ({ inputs, setInputs, loading, setLoading, buttonText, setButtonText, comparisonData, setComparisonData }) => {
   const [algorithm, setAlgorithm] = useState(options[0]);
   const [arrivalTimes, setArrivalTimes] = useState("");
   const [burstTimes, setBurstTimes] = useState("");
@@ -107,13 +20,16 @@ const Inputbox = ({ inputs, setInputs, loading, buttonText, setButtonText, setCo
   const [timeQuantum, setTimeQuantum] = useState("");
   const [inputErr, setInputErr] = useState(false);
 
-  const handleSubmit = (e) => {
-    if (e.target.textContent === "Compare"){
-      const headers = [
-        { text: "Algorithm" },
-        { text: "Averages" },
-      ];
-      setComparisonData([headers, {algorithm: "RR", averages: ["turnaroundtime: 3", "omething: 2"]}, {algorithm: "RR", averages: ["turnaroundtime: 3", "omething: 2"]}]);
+  const handleSubmit = async (e) => {
+    if (e.target.textContent === "Compare" && !inputErr && inputs){
+      setLoading(true);
+      await fetchComparisonData(inputs, setInputs, setComparisonData);
+      setTimeout(() => {
+        if (comparisonData && comparisonData !== "err"){
+          setInputs("err");
+        }
+        setLoading(false);
+      }, 500)
     }
     else {
       const inputData = parseInputs(algorithm.value, arrivalTimes, burstTimes, priorities, timeQuantum, inputErr, setInputErr);
@@ -127,7 +43,28 @@ const Inputbox = ({ inputs, setInputs, loading, buttonText, setButtonText, setCo
   };
 
   useEffect(() => {
-    setButtonText(loading ? (!inputs ? "Loading..." : (buttonText === "Compare" ? "Comparing..." : "Solving...")) : ((inputs && inputs !== "err" && !inputErr) ? "Compare" : "Submit"))
+    if (loading){
+      if (!inputs){
+        setButtonText("Loading...");
+      }
+      else {
+        if (buttonText === "Compare"){
+          setButtonText("Comparing...");
+        }
+        else {
+          setButtonText("Solving...");
+        }
+      }
+    }
+    else {
+      if (inputs && inputs !== "err" && !inputErr){
+        setButtonText("Compare");
+      }
+      else {
+        setButtonText("Submit");
+      }
+    }
+    // setButtonText(loading ? (!inputs ? "Loading..." : (buttonText === "Compare" ? "Comparing..." : "Solving...")) : ((inputs && inputs !== "err" && !inputErr) ? "Compare" : "Submit"))
   }, [loading])
 
   return (
